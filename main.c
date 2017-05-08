@@ -23,8 +23,11 @@
 #define POST "POST"
 #define NOT_ALLOWED "HTTP/1.1 405\n"
 
+int listen_fd;
+
 void signal_handler(int sig) {
     puts("Handle sig");
+    close(listen_fd);
     exit(0);
 }
 
@@ -40,7 +43,7 @@ void put_log(char log_message[]) {
 
 void time_consuming_job() {
     int i;
-    for(i = 0; i < 100000000; i++) {}
+    // for(i = 0; i < 100000000; i++) {}
 }
 
 void *mock_endpoint(int *client_fd_ptr) {
@@ -60,7 +63,7 @@ void *mock_endpoint(int *client_fd_ptr) {
 }
 
 int main(int argc, const char * argv[]) {
-    int listen_fd, client_fd, c;
+    int client_fd, c;
     struct sockaddr_in server, client;
     pthread_t thread;
 
@@ -94,8 +97,8 @@ int main(int argc, const char * argv[]) {
         if (client_fd < 0) {
             put_log("Could not accept connection!");
         } else {
-            pthread_create(&thread, NULL, mock_endpoint, &client_fd);
-            // mock_endpoint(&client_fd);
+            // pthread_create(&thread, NULL, mock_endpoint, &client_fd);
+            mock_endpoint(&client_fd);
         }
     }
 
